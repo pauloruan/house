@@ -1,0 +1,28 @@
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: my-house-db
+    restart: always
+    env_file:
+      - ./api/.env
+    ports:
+      - "5432:5432"
+    volumes:
+      - my_house_pgdata:/var/lib/postgresql/data
+      - ./api/configs/init.sql:/docker-entrypoint-initdb.d/init.sql
+  
+  api:
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+    container_name: my-house-api
+    ports:
+      - "8080:8080"
+    env_file:
+      - ./api/.env
+    depends_on:
+      - db 
+    restart: unless-stopped
+
+volumes:
+  my_house_pgdata:
