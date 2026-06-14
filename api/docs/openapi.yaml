@@ -1,0 +1,178 @@
+openapi: "3.0.0"
+info:
+  title: My House API
+  version: "1.0.0"
+servers:
+  - url: http://localhost:8080
+tags:
+  - name: Auth
+  - name: User
+  - name: House
+  - name: Bills
+  - name: Notifications
+  - name: System
+paths:
+  /health:
+    get:
+      tags: [System]
+      summary: Health check
+      responses: {200: {description: OK}}
+  /greeting:
+    get:
+      tags: [System]
+      summary: Saudação
+      responses: {200: {description: OK}}
+  /auth/google/login:
+    get:
+      tags: [Auth]
+      summary: Login Google
+      responses: {302: {description: Redirect}}
+  /auth/google/callback:
+    get:
+      tags: [Auth]
+      summary: Callback Google
+      parameters:
+        - {name: code, in: query, required: true, schema: {type: string}}
+        - {name: state, in: query, schema: {type: string}}
+      responses: {200: {description: Token JWT}}
+  /me:
+    get:
+      tags: [User]
+      summary: Perfil do usuário
+      security: [{bearerAuth: []}]
+      responses: {200: {description: OK}}
+    put:
+      tags: [User]
+      summary: Atualizar chave PIX
+      security: [{bearerAuth: []}]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties: {pix_key: {type: string}}
+              required: [pix_key]
+      responses: {200: {description: Atualizado}}
+  /house:
+    get:
+      tags: [House]
+      summary: Casa do usuário
+      security: [{bearerAuth: []}]
+      responses: {200: {description: OK}}
+    post:
+      tags: [House]
+      summary: Criar casa
+      security: [{bearerAuth: []}]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties: {name: {type: string}}
+              required: [name]
+      responses: {201: {description: Criada}}
+    put:
+      tags: [House]
+      summary: Atualizar casa
+      security: [{bearerAuth: []}]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties: {name: {type: string}}
+              required: [name]
+      responses: {200: {description: Atualizada}}
+    patch:
+      tags: [House]
+      summary: Atualizar casa (parcial)
+      security: [{bearerAuth: []}]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties: {name: {type: string}}
+              required: [name]
+      responses: {200: {description: Atualizada}}
+    delete:
+      tags: [House]
+      summary: Deletar casa
+      security: [{bearerAuth: []}]
+      responses: {204: {description: Deletada}}
+  /house/leave:
+    post:
+      tags: [House]
+      summary: Sair da casa
+      security: [{bearerAuth: []}]
+      responses: {204: {description: Saiu}}
+  /house/regenerate-invite-code:
+    post:
+      tags: [House]
+      summary: Regenerar código de convite
+      security: [{bearerAuth: []}]
+      responses: {200: {description: Novo código}}
+  /house/join-with-invite-code:
+    post:
+      tags: [House]
+      summary: Entrar na casa com código
+      security: [{bearerAuth: []}]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties: {invite_code: {type: string}}
+              required: [invite_code]
+      responses: {200: {description: Entrou}}
+  /notifications:
+    get:
+      tags: [Notifications]
+      summary: Listar notificações
+      security: [{bearerAuth: []}]
+      responses: {200: {description: Lista}}
+  /bills:
+    get:
+      tags: [Bills]
+      summary: Listar contas
+      security: [{bearerAuth: []}]
+      responses: {200: {description: Lista}}
+    post:
+      tags: [Bills]
+      summary: Criar conta
+      security: [{bearerAuth: []}]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name: {type: string}
+                type: {type: string, enum: [service, purchase]}
+                total_amount: {type: number}
+                due_date: {type: string, format: date}
+                resident_ids: {type: array, items: {type: string}}
+              required: [name, type, total_amount, due_date]
+      responses: {201: {description: Criada}}
+    put:
+      tags: [Bills]
+      summary: Atualizar conta
+      security: [{bearerAuth: []}]
+      responses: {200: {description: Atualizada}}
+    delete:
+      tags: [Bills]
+      summary: Deletar conta
+      security: [{bearerAuth: []}]
+      responses: {204: {description: Deletada}, 409: {description: Possui pagamentos}}
+  /bills/pay:
+    post:
+      tags: [Bills]
+      summary: Informar pagamento
+      security: [{bearerAuth: []}]
+      responses: {200: {description: Pago}}
