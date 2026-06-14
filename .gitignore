@@ -11,6 +11,7 @@ web/.pnp
 
 # Go
 api/my-house-api
+api/app
 *.exe
 *.exe~
 *.dll
