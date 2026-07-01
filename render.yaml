@@ -1,0 +1,44 @@
+services:
+  - type: web
+    name: my-house-api
+    runtime: docker
+    dockerfilePath: ./api/Dockerfile
+    dockerContext: ./api
+    region: sao-paulo
+    plan: free
+    envVars:
+      - key: DB_HOST
+        sync: false
+      - key: DB_PORT
+        value: 5432
+      - key: DB_USER
+        sync: false
+      - key: DB_PASSWORD
+        sync: false
+      - key: DB_NAME
+        sync: false
+      - key: DB_SSLMODE
+        value: require
+      - key: PORT
+        value: 8080
+      - key: FRONTEND_URL
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+      - key: GOOGLE_CLIENT_ID
+        sync: false
+      - key: GOOGLE_CLIENT_SECRET
+        sync: false
+      - key: GOOGLE_REDIRECT_URL
+        sync: false
+
+  - type: web
+    name: my-house-web
+    runtime: static
+    region: sao-paulo
+    plan: free
+    buildCommand: cd ../web && npm install && npm run build
+    staticPublishPath: ../web/dist
+    envVars:
+      - key: VITE_API_URL
+        sync: false
