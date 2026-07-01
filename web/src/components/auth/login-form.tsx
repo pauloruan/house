@@ -9,8 +9,10 @@ import {
 import { Field, FieldDescription, FieldGroup } from "@/components/ui/field"
 import { cn } from "@/lib/utils"
 
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8080"
+
 const handleGoogleLogin = () => {
-  window.location.href = "http://localhost:8080/auth/google/login"
+  window.location.href = `${API_URL}/auth/google/login`
 }
 
 export function LoginForm({ className, ...props }: React.ComponentProps<"div">) {
