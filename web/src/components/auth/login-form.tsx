@@ -67,8 +67,8 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
         </CardContent>
       </Card>
       <FieldDescription className="px-2 text-center">
-        Ao clicar para fazer login, você aceita os <a href="#">Termos do Serviço</a> e a{" "}
-        <a href="#">Política de Privacidade</a>.
+        Ao clicar para fazer login, voce aceita os <a href="/terms" className="text-zinc-900 underline">Termos do Servico</a> e a{" "}
+        <a href="/privacy" className="text-zinc-900 underline">Politica de Privacidade</a>.
       </FieldDescription>
     </div>
   )

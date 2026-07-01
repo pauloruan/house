@@ -7,6 +7,8 @@ import Bills from "@/pages/Bills"
 import Events from "@/pages/EventsPage"
 import Wishlist from "@/pages/Wishlist"
 import Profile from "@/pages/Profile"
+import PrivacyPolicy from "@/pages/PrivacyPolicy"
+import TermsOfService from "@/pages/TermsOfService"
 import { ProtectedRoute } from "@/routes/ProtectedRoute"
 import { BrowserRouter, Route, Routes } from "react-router-dom"
 import { ErrorMessage } from "./components/shared/ErrorMessage"
@@ -17,6 +19,8 @@ function App() {
       <Routes>
         <Route path="/" element={<LoginPage />} />
         <Route path="/auth/callback" element={<AuthCallback />} />
+        <Route path="/privacy" element={<PrivacyPolicy />} />
+        <Route path="/terms" element={<TermsOfService />} />
 
         <Route element={<ProtectedRoute />}>
           <Route element={<DashboardLayout />}>

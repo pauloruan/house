@@ -31,14 +31,3 @@ services:
         sync: false
       - key: GOOGLE_REDIRECT_URL
         sync: false
-
-  - type: web
-    name: my-house-web
-    runtime: static
-    region: sao-paulo
-    plan: free
-    buildCommand: cd ../web && npm install && npm run build
-    staticPublishPath: ../web/dist
-    envVars:
-      - key: VITE_API_URL
-        sync: false
