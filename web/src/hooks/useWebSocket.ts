@@ -22,22 +22,21 @@ export function useWebSocket(options: UseWebSocketOptions = {}) {
   useEffect(() => {
     if (options.onHouseUpdated) {
       eventCallbacks.onHouseUpdated.add(options.onHouseUpdated)
-      return () => eventCallbacks.onHouseUpdated.delete(options.onHouseUpdated)
+      return () => { eventCallbacks.onHouseUpdated.delete(options.onHouseUpdated!) }
     }
   }, [options.onHouseUpdated])
 
   useEffect(() => {
     if (options.onHouseDeleted) {
       eventCallbacks.onHouseDeleted.add(options.onHouseDeleted)
-      return () => eventCallbacks.onHouseDeleted.delete(options.onHouseDeleted)
+      return () => { eventCallbacks.onHouseDeleted.delete(options.onHouseDeleted!) }
     }
   }, [options.onHouseDeleted])
 
   useEffect(() => {
     if (options.onInviteCodeRegenerated) {
       eventCallbacks.onInviteCodeRegenerated.add(options.onInviteCodeRegenerated)
-      return () =>
-        eventCallbacks.onInviteCodeRegenerated.delete(options.onInviteCodeRegenerated)
+      return () => { eventCallbacks.onInviteCodeRegenerated.delete(options.onInviteCodeRegenerated!) }
     }
   }, [options.onInviteCodeRegenerated])
 

@@ -124,7 +124,7 @@ function EditBillForm({ bill, onClose }: { bill: Bill; onClose: () => void }) {
             </Field>
             <Field>
               <FieldLabel>Tipo</FieldLabel>
-              <select value={type} onChange={(e) => setType(e.target.value)} disabled={isPending}
+              <select value={type} onChange={(e) => setType(e.target.value as "service" | "purchase")} disabled={isPending}
                 className="w-full px-3 py-2 border border-zinc-200 rounded-xs bg-white text-zinc-900 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
                 <option value="service">Serviço</option>
                 <option value="purchase">Compra</option>
@@ -238,7 +238,6 @@ export function BillsList({ limit }: { limit?: number }) {
   const { data: bills, isLoading } = useBills()
   const { profile } = useUserProfile()
   const [showCreate, setShowCreate] = useState(false)
-  const residentsCount = profile?.user?.house?.residents_count || 1
   const userData = JSON.parse(localStorage.getItem("user") || "{}")
   const currentUserId = profile?.user?.id || userData.id || null
 

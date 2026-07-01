@@ -6,10 +6,6 @@ import type { Event } from "@/services/events"
 
 type Filter = "all" | "upcoming" | "past"
 
-function formatDate(date: string) {
-  return new Date(date).toLocaleDateString("pt-BR")
-}
-
 function formatDateTime(date: string) {
   return new Date(date).toLocaleString("pt-BR", { dateStyle: "short", timeStyle: "short" })
 }
