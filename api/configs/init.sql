@@ -70,3 +70,13 @@ CREATE TABLE notifications (
     text TEXT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+CREATE TABLE wishlist_items (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    house_id UUID NOT NULL REFERENCES houses(id) ON DELETE CASCADE,
+    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    url TEXT NOT NULL,
+    title VARCHAR(255) NOT NULL,
+    image_url TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
