@@ -42,16 +42,3 @@ services:
     envVars:
       - key: VITE_API_URL
         sync: false
-
-  - type: web
-    name: render-discord-webhook
-    runtime: docker
-    dockerfilePath: ./render-discord-webhook/Dockerfile
-    dockerContext: ./render-discord-webhook
-    region: sao-paulo
-    plan: free
-    envVars:
-      - key: PORT
-        value: 8080
-      - key: DISCORD_WEBHOOK_URL
-        sync: false
