@@ -48,6 +48,9 @@ func main() {
 	}
 	defer db.Close()
 
+	db.SetMaxOpenConns(25)
+	db.SetMaxIdleConns(5)
+
 	if err = db.Ping(); err != nil {
 		log.Fatalf("❌ Erro ao conectar no banco: %v", err)
 	}

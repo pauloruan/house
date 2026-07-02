@@ -63,34 +63,40 @@ func (r *UserRepository) GetFullProfile(userID string) (*models.MeResponse, erro
 		if err := r.db.QueryRow(houseQuery, houseID.String).Scan(&user.House.ID, &user.House.Name, &user.House.InviteCode, &user.House.JoinedAt); err == nil {
 			user.House.Bills = make([]models.BillProfile, 0)
 
-			billRows, _ := r.db.Query(`SELECT id, name, total_amount, due_date, status FROM bills WHERE house_id = $1`, user.House.ID)
-			for billRows.Next() {
-				var bill models.BillProfile
-				billRows.Scan(&bill.ID, &bill.Title, &bill.Amount, &bill.DueDate, &bill.Status)
-				user.House.Bills = append(user.House.Bills, bill)
+			billRows, err := r.db.Query(`SELECT id, name, total_amount, due_date, status FROM bills WHERE house_id = $1`, user.House.ID)
+			if err == nil {
+				for billRows.Next() {
+					var bill models.BillProfile
+					billRows.Scan(&bill.ID, &bill.Title, &bill.Amount, &bill.DueDate, &bill.Status)
+					user.House.Bills = append(user.House.Bills, bill)
+				}
+				billRows.Close()
 			}
-			billRows.Close()
 
 			r.db.QueryRow(`SELECT COUNT(*) FROM users WHERE house_id = $1`, houseID.String).Scan(&user.House.ResidentsCount)
 		}
 
 		user.House.Residents = []models.UserProfile{}
-		residentRows, _ := r.db.Query(`SELECT id, name, email, profile_picture, pix_key, created_at FROM users WHERE house_id = $1 ORDER BY name ASC`, houseID.String)
-		for residentRows.Next() {
-			var res models.UserProfile
-			residentRows.Scan(&res.ID, &res.Name, &res.Email, &res.ProfilePicture, &res.PixKey, &res.CreatedAt)
-			user.House.Residents = append(user.House.Residents, res)
+		residentRows, err := r.db.Query(`SELECT id, name, email, profile_picture, pix_key, created_at FROM users WHERE house_id = $1 ORDER BY name ASC`, houseID.String)
+		if err == nil {
+			for residentRows.Next() {
+				var res models.UserProfile
+				residentRows.Scan(&res.ID, &res.Name, &res.Email, &res.ProfilePicture, &res.PixKey, &res.CreatedAt)
+				user.House.Residents = append(user.House.Residents, res)
+			}
+			residentRows.Close()
 		}
-		residentRows.Close()
 
 		user.House.Events = []models.EventProfile{}
-		eventRows, _ := r.db.Query(`SELECT id, name, event_date, status FROM events WHERE house_id = $1 AND event_date >= NOW() ORDER BY event_date ASC LIMIT 5`, houseID.String)
-		for eventRows.Next() {
-			var ev models.EventProfile
-			eventRows.Scan(&ev.ID, &ev.Name, &ev.EventDate, &ev.Status)
-			user.House.Events = append(user.House.Events, ev)
+		eventRows, err := r.db.Query(`SELECT id, name, event_date, status FROM events WHERE house_id = $1 AND event_date >= NOW() ORDER BY event_date ASC LIMIT 5`, houseID.String)
+		if err == nil {
+			for eventRows.Next() {
+				var ev models.EventProfile
+				eventRows.Scan(&ev.ID, &ev.Name, &ev.EventDate, &ev.Status)
+				user.House.Events = append(user.House.Events, ev)
+			}
+			eventRows.Close()
 		}
-		eventRows.Close()
 	}
 
 	return &models.MeResponse{User: user}, nil
