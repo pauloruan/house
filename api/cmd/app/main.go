@@ -1,7 +1,6 @@
 package main
 
 import (
-	"database/sql"
 	"fmt"
 	"log"
 	"my-house/internal/handlers"
@@ -11,8 +10,9 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/stdlib"
 	"github.com/joho/godotenv"
-	_ "github.com/lib/pq"
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/google"
 )
@@ -42,7 +42,12 @@ func main() {
 	connStr := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=%s",
 		os.Getenv("DB_HOST"), os.Getenv("DB_PORT"), os.Getenv("DB_USER"), os.Getenv("DB_PASSWORD"), os.Getenv("DB_NAME"), sslmode)
 
-	db, err := sql.Open("postgres", connStr)
+	connConfig, err := pgx.ParseConfig(connStr)
+	if err != nil {
+		log.Fatalf("❌ Erro ao parsear configuração do banco: %v", err)
+	}
+
+	db := stdlib.OpenDB(*connConfig)
 	if err != nil {
 		log.Fatalf("❌ Erro ao abrir conexão com banco: %v", err)
 	}
