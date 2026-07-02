@@ -62,13 +62,15 @@ func (r *EventRepository) CreateEvent(houseID, creatorID, name, description, per
 	}
 
 	if len(participantIDs) == 0 {
-		rows, _ := r.db.Query(`SELECT id FROM users WHERE house_id = $1`, houseID)
-		for rows.Next() {
-			var uid string
-			rows.Scan(&uid)
-			participantIDs = append(participantIDs, uid)
+		rows, err := r.db.Query(`SELECT id FROM users WHERE house_id = $1`, houseID)
+		if err == nil {
+			for rows.Next() {
+				var uid string
+				rows.Scan(&uid)
+				participantIDs = append(participantIDs, uid)
+			}
+			rows.Close()
 		}
-		rows.Close()
 	}
 
 	hasCreator := false
@@ -114,11 +116,14 @@ func (r *EventRepository) ConfirmPresence(eventID, userID string) error {
 }
 
 func (r *EventRepository) getParticipants(eventID string) []models.Participant {
-	rows, _ := r.db.Query(`
+	rows, err := r.db.Query(`
 		SELECT u.id, u.name, u.profile_picture, COALESCE(ep.confirmed, false) as confirmed
 		FROM users u
 		INNER JOIN event_participants ep ON ep.user_id = u.id AND ep.event_id = $1
 		ORDER BY u.name ASC`, eventID)
+	if err != nil {
+		return []models.Participant{}
+	}
 	defer rows.Close()
 
 	var participants []models.Participant

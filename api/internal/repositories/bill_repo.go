@@ -47,27 +47,31 @@ func (r *BillRepository) GetBillsByHouseID(houseID string) ([]models.Bill, error
 			b.PaidAmount = paidAmount.Float64
 		}
 
-		paidRows, _ := r.db.Query(`SELECT user_id FROM bill_responsibles WHERE bill_id = $1 AND is_paid = true`, b.ID)
-		for paidRows.Next() {
-			var uid string
-			paidRows.Scan(&uid)
-			b.PaidBy = append(b.PaidBy, uid)
+		paidRows, err := r.db.Query(`SELECT user_id FROM bill_responsibles WHERE bill_id = $1 AND is_paid = true`, b.ID)
+		if err == nil {
+			for paidRows.Next() {
+				var uid string
+				paidRows.Scan(&uid)
+				b.PaidBy = append(b.PaidBy, uid)
+			}
+			paidRows.Close()
 		}
-		paidRows.Close()
 
 		b.Residents = []models.ResidentInfo{}
-		resRows, _ := r.db.Query(`
+		resRows, err := r.db.Query(`
 			SELECT u.id, u.name, u.profile_picture, br.bill_id IS NOT NULL as selected
 			FROM users u
 			LEFT JOIN bill_responsibles br ON br.user_id = u.id AND br.bill_id = $1
 			WHERE u.house_id = $2
 			ORDER BY u.name ASC`, b.ID, houseID)
-		for resRows.Next() {
-			var ri models.ResidentInfo
-			resRows.Scan(&ri.ID, &ri.Name, &ri.ProfilePicture, &ri.Selected)
-			b.Residents = append(b.Residents, ri)
+		if err == nil {
+			for resRows.Next() {
+				var ri models.ResidentInfo
+				resRows.Scan(&ri.ID, &ri.Name, &ri.ProfilePicture, &ri.Selected)
+				b.Residents = append(b.Residents, ri)
+			}
+			resRows.Close()
 		}
-		resRows.Close()
 
 		bills = append(bills, b)
 	}
@@ -85,13 +89,15 @@ func (r *BillRepository) CreateBill(houseID, ownerID, name, billType string, tot
 	}
 
 	if len(residentIDs) == 0 {
-		rows, _ := r.db.Query(`SELECT id FROM users WHERE house_id = $1`, houseID)
-		for rows.Next() {
-			var uid string
-			rows.Scan(&uid)
-			residentIDs = append(residentIDs, uid)
+		rows, err := r.db.Query(`SELECT id FROM users WHERE house_id = $1`, houseID)
+		if err == nil {
+			for rows.Next() {
+				var uid string
+				rows.Scan(&uid)
+				residentIDs = append(residentIDs, uid)
+			}
+			rows.Close()
 		}
-		rows.Close()
 	}
 
 	hasCreator := false
@@ -230,24 +236,28 @@ func (r *BillRepository) populateBillDetails(b *models.Bill) {
 		b.PaidAmount = paidAmount.Float64
 	}
 
-	paidRows, _ := r.db.Query(`SELECT user_id FROM bill_responsibles WHERE bill_id = $1 AND is_paid = true`, b.ID)
-	for paidRows.Next() {
-		var uid string
-		paidRows.Scan(&uid)
-		b.PaidBy = append(b.PaidBy, uid)
+	paidRows, err := r.db.Query(`SELECT user_id FROM bill_responsibles WHERE bill_id = $1 AND is_paid = true`, b.ID)
+	if err == nil {
+		for paidRows.Next() {
+			var uid string
+			paidRows.Scan(&uid)
+			b.PaidBy = append(b.PaidBy, uid)
+		}
+		paidRows.Close()
 	}
-	paidRows.Close()
 
-	residentRows, _ := r.db.Query(`
+	residentRows, err := r.db.Query(`
 		SELECT u.id, u.name, u.profile_picture, COALESCE(br.bill_id IS NOT NULL, false) as selected
 		FROM users u
 		LEFT JOIN bill_responsibles br ON br.user_id = u.id AND br.bill_id = $1
 		WHERE u.house_id = (SELECT house_id FROM bills WHERE id = $1)
 		ORDER BY u.name ASC`, b.ID)
-	for residentRows.Next() {
-		var ri models.ResidentInfo
-		residentRows.Scan(&ri.ID, &ri.Name, &ri.ProfilePicture, &ri.Selected)
-		b.Residents = append(b.Residents, ri)
+	if err == nil {
+		for residentRows.Next() {
+			var ri models.ResidentInfo
+			residentRows.Scan(&ri.ID, &ri.Name, &ri.ProfilePicture, &ri.Selected)
+			b.Residents = append(b.Residents, ri)
+		}
+		residentRows.Close()
 	}
-	residentRows.Close()
 }
