@@ -28,6 +28,20 @@ function getDueDateInput(date: string) {
   return new Date(date).toISOString().split("T")[0]
 }
 
+function formatCurrencyInput(value: string): string {
+  const numbers = value.replace(/\D/g, "")
+  if (!numbers) return ""
+  const cents = parseInt(numbers, 10)
+  const reais = cents / 100
+  return reais.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+}
+
+function parseCurrencyInput(value: string): number {
+  const numbers = value.replace(/\D/g, "")
+  if (!numbers) return 0
+  return parseInt(numbers, 10) / 100
+}
+
 function StatusDot({ bill }: { bill: Bill }) {
   const isOverdue = new Date(bill.due_date) < new Date() && bill.status !== "paid"
   if (bill.status === "paid") return <span className="h-2 w-2 rounded-full bg-green-500 flex-shrink-0" title="Pago" />
@@ -70,7 +84,7 @@ function PayButton({ bill }: { bill: Bill }) {
 function EditBillForm({ bill, onClose }: { bill: Bill; onClose: () => void }) {
   const [name, setName] = useState(bill.name)
   const [type, setType] = useState(bill.type)
-  const [amount, setAmount] = useState(String(bill.total_amount))
+  const [amountDisplay, setAmountDisplay] = useState(formatCurrencyInput(String(Math.round(bill.total_amount * 100))))
   const [dueDate, setDueDate] = useState(getDueDateInput(bill.due_date))
   const [showDelete, setShowDelete] = useState(false)
   const selectedIds = bill.residents?.filter(r => r.selected).map(r => r.id) || []
@@ -80,10 +94,16 @@ function EditBillForm({ bill, onClose }: { bill: Bill; onClose: () => void }) {
   const { mutate: update, isPending } = useUpdateBill()
   const { mutate: del, isPending: isDeleting } = useDeleteBill()
 
+  const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const raw = e.target.value
+    const formatted = formatCurrencyInput(raw)
+    setAmountDisplay(formatted)
+  }
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    const amountNum = parseFloat(amount)
-    if (!name.trim() || !dueDate || isNaN(amountNum)) return
+    const amountNum = parseCurrencyInput(amountDisplay)
+    if (!name.trim() || !dueDate || amountNum <= 0) return
     update(
       { id: bill.id, name: name.trim(), type, total_amount: amountNum, due_date: dueDate, status: bill.status, resident_ids: residentIDs },
       { onSuccess: () => onClose() }
@@ -131,9 +151,12 @@ function EditBillForm({ bill, onClose }: { bill: Bill; onClose: () => void }) {
               </select>
             </Field>
             <Field>
-              <FieldLabel>Valor (R$)</FieldLabel>
-              <input type="number" step="0.01" value={amount} onChange={(e) => setAmount(e.target.value)} disabled={isPending}
-                className="w-full px-3 py-2 border border-zinc-200 rounded-xs bg-white text-zinc-900 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+              <FieldLabel>Valor</FieldLabel>
+              <div className="relative">
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-zinc-500">R$</span>
+                <input type="text" inputMode="numeric" placeholder="0,00" value={amountDisplay} onChange={handleAmountChange} disabled={isPending}
+                  className="w-full pl-10 pr-3 py-2 border border-zinc-200 rounded-xs bg-white text-zinc-900 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+              </div>
             </Field>
             <Field>
               <FieldLabel>Vencimento</FieldLabel>

@@ -7,6 +7,20 @@ import { useUserProfile } from "@/hooks/useUser"
 import { notify } from "@/components/ui/toast"
 import { ResidentSelector } from "./ResidentSelector"
 
+function formatCurrencyInput(value: string): string {
+  const numbers = value.replace(/\D/g, "")
+  if (!numbers) return ""
+  const cents = parseInt(numbers, 10)
+  const reais = cents / 100
+  return reais.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+}
+
+function parseCurrencyInput(value: string): number {
+  const numbers = value.replace(/\D/g, "")
+  if (!numbers) return 0
+  return parseInt(numbers, 10) / 100
+}
+
 const BILL_TYPES = [
   { value: "service", label: "Serviço (aluguel, luz, internet)" },
   { value: "purchase", label: "Compra (supermercado)" },
@@ -15,7 +29,7 @@ const BILL_TYPES = [
 export function CreateBillForm({ onClose }: { onClose: () => void }) {
   const [name, setName] = useState("")
   const [type, setType] = useState("service")
-  const [amount, setAmount] = useState("")
+  const [amountDisplay, setAmountDisplay] = useState("")
   const [dueDate, setDueDate] = useState("")
   const { profile } = useUserProfile()
   const [residentIDs, setResidentIDs] = useState<string[]>([])
@@ -28,17 +42,23 @@ export function CreateBillForm({ onClose }: { onClose: () => void }) {
     selected: false,
   })) || []
 
+  const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const raw = e.target.value
+    const formatted = formatCurrencyInput(raw)
+    setAmountDisplay(formatted)
+  }
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    const amountNum = parseFloat(amount)
-    if (!name.trim() || !dueDate || isNaN(amountNum) || amountNum <= 0) return
+    const amountNum = parseCurrencyInput(amountDisplay)
+    if (!name.trim() || !dueDate || amountNum <= 0) return
 
     createBill(
       { name: name.trim(), type, total_amount: amountNum, due_date: dueDate, resident_ids: residentIDs },
       {
         onSuccess: () => {
           setName("")
-          setAmount("")
+          setAmountDisplay("")
           setDueDate("")
           onClose()
           notify("✅ Conta criada", `"${name}" foi cadastrada com sucesso.`)
@@ -69,9 +89,12 @@ export function CreateBillForm({ onClose }: { onClose: () => void }) {
               </select>
             </Field>
             <Field>
-              <FieldLabel>Valor (R$)</FieldLabel>
-              <input type="number" step="0.01" min="0" placeholder="0,00" value={amount} onChange={(e) => setAmount(e.target.value)} disabled={isPending}
-                className="w-full px-3 py-2 border border-zinc-200 rounded-xs bg-white text-zinc-900 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+              <FieldLabel>Valor</FieldLabel>
+              <div className="relative">
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-zinc-500">R$</span>
+                <input type="text" inputMode="numeric" placeholder="0,00" value={amountDisplay} onChange={handleAmountChange} disabled={isPending}
+                  className="w-full pl-10 pr-3 py-2 border border-zinc-200 rounded-xs bg-white text-zinc-900 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+              </div>
             </Field>
             <Field>
               <FieldLabel>Vencimento</FieldLabel>
