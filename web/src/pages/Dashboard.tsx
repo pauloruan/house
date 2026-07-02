@@ -24,6 +24,7 @@ export default function Dashboard() {
   const { data: events } = useEvents()
   const [showCreateEvent, setShowCreateEvent] = useState(false)
   const [editingEventId, setEditingEventId] = useState<string | null>(null)
+  const [visibleEvents, setVisibleEvents] = useState(2)
 
   if (isLoading) return <Loading />
   if (!profile) return null
@@ -103,7 +104,7 @@ export default function Dashboard() {
         {!events || events.length === 0 ? (
           <p className="text-sm text-zinc-400 text-center py-6">Nenhum evento cadastrado.</p>
         ) : (
-          events.slice(0, 2).map((event) => {
+          events.slice(0, visibleEvents).map((event) => {
             if (editingEventId === event.id) {
               return <EditEventForm key={event.id} event={event} onClose={() => setEditingEventId(null)} />
             }
@@ -141,17 +142,29 @@ export default function Dashboard() {
                       </span>
                     ) : isParticipant ? (
                       <ConfirmButton eventId={event.id} />
-                    ) : null}
+                    ) : (
+                      <ConfirmButton eventId={event.id} />
+                    )}
                   </div>
                 </div>
+              </div>
+              <div className="mt-2 pt-2 border-t border-zinc-100">
+                <p className="text-xs text-zinc-400">
+                  {event.participants.filter(p => p.confirmed).length} confirmado(s) de {event.participants.length} convidado(s)
+                </p>
               </div>
             </div>
           )})
         )}
         {events && events.length > 0 && (
-          <div className="flex justify-center pt-2">
-            <Link to="/events" className="text-xs text-zinc-500 hover:text-zinc-900">
-              Ver todos ({events.length})
+          <div className="flex justify-center items-center gap-2 pt-2">
+            {events.length > visibleEvents && (
+              <Button variant="ghost" size="sm" className="text-xs text-zinc-500" onClick={() => setVisibleEvents(v => v + 2)}>
+                Ver mais ({events.length - visibleEvents})
+              </Button>
+            )}
+            <Link to="/events">
+              <Button variant="outline" size="sm" className="text-xs">Ver todos ({events.length})</Button>
             </Link>
           </div>
         )}

@@ -84,7 +84,11 @@ func (r *EventRepository) CreateEvent(houseID, creatorID, name, description, per
 	}
 
 	for _, pid := range participantIDs {
-		r.db.Exec(`INSERT INTO event_participants (event_id, user_id, confirmed) VALUES ($1, $2, false) ON CONFLICT DO NOTHING`, id, pid)
+		if pid == creatorID {
+			r.db.Exec(`INSERT INTO event_participants (event_id, user_id, confirmed) VALUES ($1, $2, true) ON CONFLICT DO NOTHING`, id, pid)
+		} else {
+			r.db.Exec(`INSERT INTO event_participants (event_id, user_id, confirmed) VALUES ($1, $2, false) ON CONFLICT DO NOTHING`, id, pid)
+		}
 	}
 
 	return r.GetEventByID(id)

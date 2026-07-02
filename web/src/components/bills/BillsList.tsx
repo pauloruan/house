@@ -238,6 +238,7 @@ export function BillsList({ limit }: { limit?: number }) {
   const { data: bills, isLoading } = useBills()
   const { profile } = useUserProfile()
   const [showCreate, setShowCreate] = useState(false)
+  const [visibleCount, setVisibleCount] = useState(limit || 999)
   const userData = JSON.parse(localStorage.getItem("user") || "{}")
   const currentUserId = profile?.user?.id || userData.id || null
 
@@ -255,7 +256,8 @@ export function BillsList({ limit }: { limit?: number }) {
     return a.name.localeCompare(b.name)
   }) : []
 
-  const displayedBills = limit ? sortedBills.slice(0, limit) : sortedBills
+  const displayedBills = sortedBills.slice(0, visibleCount)
+  const hasMore = limit && sortedBills.length > visibleCount
 
   return (
     <div className="space-y-3">
@@ -275,9 +277,14 @@ export function BillsList({ limit }: { limit?: number }) {
       )}
 
       {limit && sortedBills.length > 0 && (
-        <div className="flex justify-center pt-2">
-          <Link to="/bills" className="text-xs text-zinc-500 hover:text-zinc-900:text-zinc-100">
-            Ver todas ({sortedBills.length})
+        <div className="flex justify-center items-center gap-2 pt-2">
+          {hasMore && (
+            <Button variant="ghost" size="sm" className="text-xs text-zinc-500" onClick={() => setVisibleCount(v => v + limit)}>
+              Ver mais ({sortedBills.length - visibleCount})
+            </Button>
+          )}
+          <Link to="/bills">
+            <Button variant="outline" size="sm" className="text-xs">Ver todas ({sortedBills.length})</Button>
           </Link>
         </div>
       )}
