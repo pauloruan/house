@@ -22,9 +22,9 @@ function parseCurrencyInput(value: string): number {
 }
 
 const BILL_TYPES = [
-  { value: "service", label: "Serviço (aluguel, luz, internet)" },
-  { value: "purchase", label: "Compra (supermercado)" },
+  { value: "purchase", label: "Compra" },
   { value: "pets", label: "Pets" },
+  { value: "service", label: "Serviço" },
   { value: "streaming", label: "Streaming" },
 ]
 
@@ -44,14 +44,14 @@ export function CreateBillForm({ onClose }: { onClose: () => void }) {
     selected: false,
   })) || []
 
-  const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const raw = e.target.value
+  const handleAmountChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const raw = event.target.value
     const formatted = formatCurrencyInput(raw)
     setAmountDisplay(formatted)
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
+  const handleSubmit = (event: React.FormEvent) => {
+    event.preventDefault()
     const amountNum = parseCurrencyInput(amountDisplay)
     if (!name.trim() || !dueDate || amountNum <= 0) return
 
@@ -80,12 +80,12 @@ export function CreateBillForm({ onClose }: { onClose: () => void }) {
           <FieldGroup>
             <Field>
               <FieldLabel>Nome</FieldLabel>
-              <input type="text" placeholder="Ex: Aluguel, Luz, Supermercado" value={name} onChange={(e) => setName(e.target.value)} disabled={isPending}
+              <input type="text" placeholder="Ex: Aluguel, Luz, Supermercado" value={name} onChange={(event) => setName(event.target.value)} disabled={isPending}
                 className="w-full px-3 py-2 border border-zinc-200 rounded-xs bg-white text-zinc-900 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
             </Field>
             <Field>
               <FieldLabel>Tipo</FieldLabel>
-              <select value={type} onChange={(e) => setType(e.target.value)} disabled={isPending}
+              <select value={type} onChange={(event) => setType(event.target.value)} disabled={isPending}
                 className="w-full px-3 py-2 border border-zinc-200 rounded-xs bg-white text-zinc-900 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
                 {BILL_TYPES.map((t) => (<option key={t.value} value={t.value}>{t.label}</option>))}
               </select>
@@ -100,7 +100,7 @@ export function CreateBillForm({ onClose }: { onClose: () => void }) {
             </Field>
             <Field>
               <FieldLabel>Vencimento</FieldLabel>
-              <input type="date" value={dueDate} onChange={(e) => setDueDate(e.target.value)} disabled={isPending}
+              <input type="date" value={dueDate} onChange={(event) => setDueDate(event.target.value)} disabled={isPending}
                 className="w-full px-3 py-2 border border-zinc-200 rounded-xs bg-white text-zinc-900 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
             </Field>
           </FieldGroup>
