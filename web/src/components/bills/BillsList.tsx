@@ -13,7 +13,13 @@ import { Link } from "react-router-dom"
 import { ResidentSelector } from "./ResidentSelector"
 
 function getTypeLabel(type: string) {
-  return type === "service" ? "Serviço" : "Compra"
+  const labels: Record<string, string> = {
+    service: "Serviço",
+    purchase: "Compra",
+    pets: "Pets",
+    streaming: "Streaming",
+  }
+  return labels[type] || type
 }
 
 function formatCurrency(value: number) {
@@ -94,14 +100,14 @@ function EditBillForm({ bill, onClose }: { bill: Bill; onClose: () => void }) {
   const { mutate: update, isPending } = useUpdateBill()
   const { mutate: del, isPending: isDeleting } = useDeleteBill()
 
-  const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const raw = e.target.value
+  const handleAmountChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const raw = event.target.value
     const formatted = formatCurrencyInput(raw)
     setAmountDisplay(formatted)
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
+  const handleSubmit = (event: React.FormEvent) => {
+    event.preventDefault()
     const amountNum = parseCurrencyInput(amountDisplay)
     if (!name.trim() || !dueDate || amountNum <= 0) return
     update(
@@ -139,15 +145,17 @@ function EditBillForm({ bill, onClose }: { bill: Bill; onClose: () => void }) {
           <FieldGroup>
             <Field>
               <FieldLabel>Nome</FieldLabel>
-              <input type="text" value={name} onChange={(e) => setName(e.target.value)} disabled={isPending}
+              <input type="text" value={name} onChange={(event) => setName(event.target.value)} disabled={isPending}
                 className="w-full px-3 py-2 border border-zinc-200 rounded-xs bg-white text-zinc-900 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
             </Field>
             <Field>
               <FieldLabel>Tipo</FieldLabel>
-              <select value={type} onChange={(e) => setType(e.target.value as "service" | "purchase")} disabled={isPending}
+                <select value={type} onChange={(event) => setType(event.target.value as Bill["type"])} disabled={isPending}
                 className="w-full px-3 py-2 border border-zinc-200 rounded-xs bg-white text-zinc-900 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
-                <option value="service">Serviço</option>
                 <option value="purchase">Compra</option>
+                <option value="pets">Pets</option>
+                <option value="service">Serviço</option>
+                <option value="streaming">Streaming</option>
               </select>
             </Field>
             <Field>
@@ -160,7 +168,7 @@ function EditBillForm({ bill, onClose }: { bill: Bill; onClose: () => void }) {
             </Field>
             <Field>
               <FieldLabel>Vencimento</FieldLabel>
-              <input type="date" value={dueDate} onChange={(e) => setDueDate(e.target.value)} disabled={isPending}
+              <input type="date" value={dueDate} onChange={(event) => setDueDate(event.target.value)} disabled={isPending}
                 className="w-full px-3 py-2 border border-zinc-200 rounded-xs bg-white text-zinc-900 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
             </Field>
           </FieldGroup>

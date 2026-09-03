@@ -76,22 +76,22 @@ export function EditEventForm({ event, onClose }: { event: Event; onClose: () =>
           <FieldGroup>
             <Field>
               <FieldLabel>Nome</FieldLabel>
-              <input type="text" value={name} onChange={(e) => setName(e.target.value)} disabled={isPending}
+              <input type="text" value={name} onChange={(event) => setName(event.target.value)} disabled={isPending}
                 className="w-full px-3 py-2 border border-zinc-200 rounded-xs bg-white text-zinc-900 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
             </Field>
             <Field>
               <FieldLabel>Descrição</FieldLabel>
-              <textarea value={description} onChange={(e) => setDescription(e.target.value)} disabled={isPending} rows={2}
+              <textarea value={description} onChange={(event) => setDescription(event.target.value)} disabled={isPending} rows={2}
                 className="w-full px-3 py-2 border border-zinc-200 rounded-xs bg-white text-zinc-900 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none" />
             </Field>
             <Field>
               <FieldLabel>Data e hora</FieldLabel>
-              <input type="datetime-local" value={eventDate} onChange={(e) => setEventDate(e.target.value)} disabled={isPending}
+              <input type="datetime-local" value={eventDate} onChange={(event) => setEventDate(event.target.value)} disabled={isPending}
                 className="w-full px-3 py-2 border border-zinc-200 rounded-xs bg-white text-zinc-900 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
             </Field>
             <Field>
               <FieldLabel>Periodicidade</FieldLabel>
-              <select value={periodicity} onChange={(e) => setPeriodicity(e.target.value)} disabled={isPending}
+              <select value={periodicity} onChange={(event) => setPeriodicity(event.target.value)} disabled={isPending}
                 className="w-full px-3 py-2 border border-zinc-200 rounded-xs bg-white text-zinc-900 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
                 <option value="">Sem recorrência</option>
                 <option value="Semanal">Semanal</option>
@@ -101,7 +101,7 @@ export function EditEventForm({ event, onClose }: { event: Event; onClose: () =>
             </Field>
             <Field>
               <FieldLabel>Endereço</FieldLabel>
-              <input type="text" value={address} onChange={(e) => setAddress(e.target.value)} disabled={isPending}
+              <input type="text" value={address} onChange={(event) => setAddress(event.target.value)} disabled={isPending}
                 className="w-full px-3 py-2 border border-zinc-200 rounded-xs bg-white text-zinc-900 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
             </Field>
           </FieldGroup>

@@ -56,7 +56,7 @@ export default function WishlistPage() {
           <FieldGroup>
             <Field>
               <FieldLabel>Link do produto</FieldLabel>
-              <input type="url" placeholder="https://www.exemplo.com/produto" value={url} onChange={(e) => setUrl(e.target.value)} disabled={isAdding}
+              <input type="url" placeholder="https://www.exemplo.com/produto" value={url} onChange={(event) => setUrl(event.target.value)} disabled={isAdding}
                 className="w-full px-3 py-2 border border-zinc-200 rounded-xs bg-white text-zinc-900 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
             </Field>
           </FieldGroup>

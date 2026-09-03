@@ -48,7 +48,7 @@ export function JoinHouseForm() {
                 type="text"
                 placeholder="000000"
                 value={inviteCode.toUpperCase()}
-                onChange={(e) => setInviteCode(e.target.value)}
+                onChange={(event) => setInviteCode(event.target.value)}
                 disabled={isPending}
                 maxLength={6}
                 className="w-full px-3 py-2 border border-zinc-200 rounded-xs bg-white text-zinc-900 placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-blue-500 text-center text-2xl font-mono font-bold tracking-widest"

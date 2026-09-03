@@ -65,29 +65,29 @@ export function CreateEventForm({ onClose }: { onClose: () => void }) {
           <FieldGroup>
             <Field>
               <FieldLabel>Nome</FieldLabel>
-              <input type="text" placeholder="Ex: Churrasco, Faxina, Reunião" value={name} onChange={(e) => setName(e.target.value)} disabled={isPending}
+              <input type="text" placeholder="Ex: Churrasco, Faxina, Reunião" value={name} onChange={(event) => setName(event.target.value)} disabled={isPending}
                 className="w-full px-3 py-2 border border-zinc-200 rounded-xs bg-white text-zinc-900 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
             </Field>
             <Field>
               <FieldLabel>Descrição</FieldLabel>
-              <textarea placeholder="Detalhes do evento..." value={description} onChange={(e) => setDescription(e.target.value)} disabled={isPending} rows={2}
+              <textarea placeholder="Detalhes do evento..." value={description} onChange={(event) => setDescription(event.target.value)} disabled={isPending} rows={2}
                 className="w-full px-3 py-2 border border-zinc-200 rounded-xs bg-white text-zinc-900 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none" />
             </Field>
             <Field>
               <FieldLabel>Data e hora</FieldLabel>
-              <input type="datetime-local" value={eventDate} onChange={(e) => setEventDate(e.target.value)} disabled={isPending}
+              <input type="datetime-local" value={eventDate} onChange={(event) => setEventDate(event.target.value)} disabled={isPending}
                 className="w-full px-3 py-2 border border-zinc-200 rounded-xs bg-white text-zinc-900 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
             </Field>
             <Field>
               <FieldLabel>Periodicidade</FieldLabel>
-              <select value={periodicity} onChange={(e) => setPeriodicity(e.target.value)} disabled={isPending}
+              <select value={periodicity} onChange={(event) => setPeriodicity(event.target.value)} disabled={isPending}
                 className="w-full px-3 py-2 border border-zinc-200 rounded-xs bg-white text-zinc-900 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
                 {PERIODICITY_OPTIONS.map((o) => (<option key={o.value} value={o.value}>{o.label}</option>))}
               </select>
             </Field>
             <Field>
               <FieldLabel>Endereço</FieldLabel>
-              <input type="text" placeholder="Ex: Rua X, 123" value={address} onChange={(e) => setAddress(e.target.value)} disabled={isPending}
+              <input type="text" placeholder="Ex: Rua X, 123" value={address} onChange={(event) => setAddress(event.target.value)} disabled={isPending}
                 className="w-full px-3 py-2 border border-zinc-200 rounded-xs bg-white text-zinc-900 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
             </Field>
           </FieldGroup>
