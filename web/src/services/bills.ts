@@ -16,7 +16,7 @@ export interface Bill {
   name: string
   total_amount: number
   paid_amount: number
-  type: "service" | "purchase"
+  type: "service" | "purchase" | "pets" | "streaming"
   status: string
   due_date: string
   created_at: string

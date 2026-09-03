@@ -24,6 +24,8 @@ function parseCurrencyInput(value: string): number {
 const BILL_TYPES = [
   { value: "service", label: "Serviço (aluguel, luz, internet)" },
   { value: "purchase", label: "Compra (supermercado)" },
+  { value: "pets", label: "Pets" },
+  { value: "streaming", label: "Streaming" },
 ]
 
 export function CreateBillForm({ onClose }: { onClose: () => void }) {

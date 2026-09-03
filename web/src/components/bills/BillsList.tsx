@@ -13,7 +13,13 @@ import { Link } from "react-router-dom"
 import { ResidentSelector } from "./ResidentSelector"
 
 function getTypeLabel(type: string) {
-  return type === "service" ? "Serviço" : "Compra"
+  const labels: Record<string, string> = {
+    service: "Serviço",
+    purchase: "Compra",
+    pets: "Pets",
+    streaming: "Streaming",
+  }
+  return labels[type] || type
 }
 
 function formatCurrency(value: number) {
@@ -144,10 +150,12 @@ function EditBillForm({ bill, onClose }: { bill: Bill; onClose: () => void }) {
             </Field>
             <Field>
               <FieldLabel>Tipo</FieldLabel>
-              <select value={type} onChange={(e) => setType(e.target.value as "service" | "purchase")} disabled={isPending}
+                <select value={type} onChange={(e) => setType(e.target.value as Bill["type"])} disabled={isPending}
                 className="w-full px-3 py-2 border border-zinc-200 rounded-xs bg-white text-zinc-900 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
                 <option value="service">Serviço</option>
                 <option value="purchase">Compra</option>
+                <option value="pets">Pets</option>
+                <option value="streaming">Streaming</option>
               </select>
             </Field>
             <Field>
